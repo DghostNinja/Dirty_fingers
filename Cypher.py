@@ -30,6 +30,24 @@ def caesar_cipher(text, shift, mode='encrypt'):
     
     return result
 
+def vigenere_cipher(text, key, mode='encrypt'):
+    result = []
+    key = key.lower()
+    key_length = len(key)
+    
+    for i, char in enumerate(text):
+        if char.isalpha():
+            shift = ord(key[i % key_length]) - ord('a')
+            if mode == 'decrypt':
+                shift = -shift  # Reverse shift for decryption
+            
+            shift_base = ord('A') if char.isupper() else ord('a')
+            result.append(chr((ord(char) - shift_base + shift) % 26 + shift_base))
+        else:
+            result.append(char)  # Keep non-letters unchanged
+    
+    return ''.join(result)
+
 def base64_encode(text):
     return base64.b64encode(text.encode()).decode()
 
@@ -53,10 +71,11 @@ def get_valid_mode():
 def main():
     print("Choose the encoding method:")
     print("1. Caesar Cipher")
-    print("2. Base64 Encoding")
-    print("3. URL Encoding")
+    print("2. Vigenère Cipher")
+    print("3. Base64 Encoding")
+    print("4. URL Encoding")
     
-    choice = input("Enter your choice (1/2/3): ").strip()
+    choice = input("Enter your choice (1/2/3/4): ").strip()
 
     if choice == '1':  # Caesar Cipher
         shift = int(input("Enter the shift value: "))
@@ -66,14 +85,22 @@ def main():
         result = caesar_cipher(text, shift, mode='encrypt' if mode == 'e' else 'decrypt')
         print(f"Result: {result}")
 
-    elif choice == '2':  # Base64
+    elif choice == '2':  # Vigenère Cipher
+        key = input("Enter the keyword: ").strip()
+        mode = get_valid_mode()
+        
+        text = input("Enter text: ")
+        result = vigenere_cipher(text, key, mode='encrypt' if mode == 'e' else 'decrypt')
+        print(f"Result: {result}")
+
+    elif choice == '3':  # Base64
         mode = get_valid_mode()
         
         text = input("Enter text: ")
         result = base64_encode(text) if mode == 'e' else base64_decode(text)
         print(f"Result: {result}")
 
-    elif choice == '3':  # URL Encoding
+    elif choice == '4':  # URL Encoding
         mode = get_valid_mode()
         
         text = input("Enter text: ")
@@ -81,7 +108,7 @@ def main():
         print(f"Result: {result}")
 
     else:
-        print("Invalid choice! Please enter 1, 2, or 3.")
+        print("Invalid choice! Please enter 1, 2, 3, or 4.")
 
 if __name__ == "__main__":
     main()
